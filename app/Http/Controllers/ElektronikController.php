@@ -8,6 +8,7 @@ use App\Models\JenisAset;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
 
 class ElektronikController extends Controller
 {
@@ -16,17 +17,28 @@ class ElektronikController extends Controller
      */
     public function index()
     {
-        return view('/elektronik', [
-            "asset_holder" => User::all(),
-            "user_entry" => User::where('employee_name', Auth::user()->employee_name)->first()->id,
-            "electronic" => Elektronik::join('jenis_asets', 'jenis_asets.id', '=', 'elektroniks.sub_category')
-                                ->join('pegawais', 'pegawais.id', '=', 'elektroniks.asset_holder')
-                                ->select('elektroniks.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'elektroniks.asset_name',
-                                         'elektroniks.brand', 'elektroniks.type', 'elektroniks.specification', 'elektroniks.warranty_period',
-                                         'elektroniks.price', 'elektroniks.quantity', 'elektroniks.condition', 'elektroniks.description',
-                                         'pegawais.employee_name')
-                                ->paginate(10)->withQueryString()
-        ]);
+        $activities = Activity::with('causer:id,employee_name,access') // Menggunakan eager loading untuk menghindari join manual
+        ->select('description', 'causer_id', 'properties', 'created_at')
+        ->get();
+
+        $user = Auth::user();
+
+        $userRole = $user->access;
+
+        $asset_holder = User::all();
+
+        $user_entry = $user->id;
+
+        $query = Elektronik::join('jenis_asets', 'jenis_asets.id', '=', 'elektroniks.sub_category')
+        ->join('pegawais', 'pegawais.id', '=', 'elektroniks.asset_holder')
+        ->select('elektroniks.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'elektroniks.asset_name',
+                 'elektroniks.brand', 'elektroniks.type', 'elektroniks.specification', 'elektroniks.warranty_period',
+                 'elektroniks.price', 'elektroniks.quantity', 'elektroniks.condition', 'elektroniks.description',
+                 'pegawais.employee_name');
+        
+        $electronic = $query->paginate(10)->withQueryString();
+
+        return view('/elektronik', compact('electronic', 'asset_holder', 'user_entry', 'activities'));
     }
 
     /**

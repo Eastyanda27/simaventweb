@@ -8,6 +8,7 @@ use App\Models\JenisAset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
 
 class TanahBangunanController extends Controller
 {
@@ -16,18 +17,29 @@ class TanahBangunanController extends Controller
      */
     public function index()
     {
-        return view('/tanahbangunan', [
-            "sub_category" => JenisAset::select('id', 'sub_category')->where('asset_category', 'Tanah & Bangunan')->get(),
-            "user_entry" => User::where('employee_name', Auth::user()->employee_name)->first()->id,
-            "building" => TanahBangunan::join('jenis_asets', 'jenis_asets.id', '=', 'tanah_bangunans.sub_category')
-                                ->join('pegawais', 'pegawais.id', '=', 'tanah_bangunans.user_entry')
-                                ->select('tanah_bangunans.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'tanah_bangunans.asset_name',
-                                         'tanah_bangunans.size', 'tanah_bangunans.rights_status', 'tanah_bangunans.address', 'tanah_bangunans.subdistrict',
-                                         'tanah_bangunans.village', 'tanah_bangunans.condition', 'tanah_bangunans.certificate_date', 'tanah_bangunans.certificate_number',
-                                         'tanah_bangunans.origin', 'tanah_bangunans.price', 'tanah_bangunans.useful_life', 'tanah_bangunans.use_for',
-                                         'tanah_bangunans.description', 'pegawais.employee_name')
-                                ->paginate(10)->withQueryString()
-        ]);
+        $activities = Activity::with('causer:id,employee_name,access') // Menggunakan eager loading untuk menghindari join manual
+        ->select('description', 'causer_id', 'properties', 'created_at')
+        ->get();
+
+        $user = Auth::user();
+        
+        $userRole = $user->access;
+
+        $sub_category = JenisAset::where('asset_category', 'Tanah & Bangunan')->select('id', 'sub_category')->get();
+
+        $user_entry = $user->id;
+
+        $query = TanahBangunan::join('jenis_asets', 'jenis_asets.id', '=', 'tanah_bangunans.sub_category')
+        ->join('pegawais', 'pegawais.id', '=', 'tanah_bangunans.user_entry')
+        ->select('tanah_bangunans.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'tanah_bangunans.asset_name',
+                 'tanah_bangunans.size', 'tanah_bangunans.rights_status', 'tanah_bangunans.address', 'tanah_bangunans.subdistrict',
+                 'tanah_bangunans.village', 'tanah_bangunans.condition', 'tanah_bangunans.certificate_date', 'tanah_bangunans.certificate_number',
+                 'tanah_bangunans.origin', 'tanah_bangunans.price', 'tanah_bangunans.useful_life', 'tanah_bangunans.use_for',
+                 'tanah_bangunans.description', 'pegawais.employee_name');
+        
+        $building = $query->paginate(10)->withQueryString();
+
+        return view('/tanahbangunan', compact('sub_category', 'user_entry', 'building', 'activities'));
     }
 
     /**

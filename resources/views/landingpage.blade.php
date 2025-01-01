@@ -50,27 +50,24 @@
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top ">
+  <header id="header" class="fixed-top" style="background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px 0; transition: all 0.3s ease;">
     <div class="container d-flex align-items-center">
-      <img src="{{ asset('Image/logosmall.png') }}" alt="Logo BNN" style="width: 50px; height: 50px; margin-right: 20px;">
-      <h1 class="logo me-auto"><a href="index.html">Simavent</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto active" href="#hero">Beranda</a></li>
-          <li><a class="nav-link scrollto" href="#pelayanan">Tentang Fitur</a></li>
-          <li><a class="nav-link scrollto" href="#skills">Tentang Simavent</a></li>
-          <li><a class="nav-link scrollto" href="#faq">FAQ</a></li>
-          <li><a class="nav-link scrollto" href="#kontak">Kontak</a></li>
-          <li><a class="getstarted" href="/login">Login</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
-
+        <img src="{{ asset('Image/logosmall.png') }}" alt="Logo BNN" style="width: 50px; height: 50px; margin-right: 20px;">
+        <h1 class="logo me-auto"><a href="index.html" style="color: #333; text-decoration: none;">Simavent</a></h1>
+        <nav id="navbar" class="navbar">
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; gap: 20px;">
+                <li><a class="nav-link scrollto active" href="#hero" style="color: #333; font-weight: 500; text-decoration: none; transition: color 0.3s ease;">Beranda</a></li>
+                <li><a class="nav-link scrollto" href="#pelayanan" style="color: #333; font-weight: 500; text-decoration: none; transition: color 0.3s ease;">Tentang Fitur</a></li>
+                <li><a class="nav-link scrollto" href="#skills" style="color: #333; font-weight: 500; text-decoration: none; transition: color 0.3s ease;">Tentang Simavent</a></li>
+                <li><a class="nav-link scrollto" href="#faq" style="color: #333; font-weight: 500; text-decoration: none; transition: color 0.3s ease;">FAQ</a></li>
+                <li><a class="nav-link scrollto" href="#kontak" style="color: #333; font-weight: 500; text-decoration: none; transition: color 0.3s ease;">Kontak</a></li>
+                <li><a class="getstarted" href="/login" style="background-color: #007bff; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; transition: background-color 0.3s ease;">Login</a></li>
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
     </div>
-  </header><!-- End Header -->
+  </header>
+
 
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="d-flex align-items-center">

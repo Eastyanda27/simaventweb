@@ -8,6 +8,7 @@ use App\Models\Perabotan;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
 
 class PerabotanController extends Controller
 {
@@ -16,17 +17,28 @@ class PerabotanController extends Controller
      */
     public function index()
     {
-        return view('/perabotan ', [
-            "asset_holder" => User::all(),
-            "user_entry" => User::where('employee_name', Auth::user()->employee_name)->first()->id,
-            "furniture" => Perabotan::join('jenis_asets', 'jenis_asets.id', '=', 'perabotans.sub_category')
-                                ->join('pegawais', 'pegawais.id', '=', 'perabotans.asset_holder')
-                                ->select('perabotans.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'perabotans.asset_name',
-                                         'perabotans.brand', 'perabotans.type', 'perabotans.specification', 'perabotans.warranty_period',
-                                         'perabotans.price', 'perabotans.quantity', 'perabotans.condition', 'perabotans.description',
-                                         'pegawais.employee_name')
-                                ->paginate(10)->withQueryString()
-        ]);
+        $activities = Activity::with('causer:id,employee_name,access') // Menggunakan eager loading untuk menghindari join manual
+        ->select('description', 'causer_id', 'properties', 'created_at')
+        ->get();
+
+        $user = Auth::user();
+
+        $userRole = $user->access;
+
+        $asset_holder = User::all();
+
+        $user_entry = $user->id;
+
+        $query = Perabotan::join('jenis_asets', 'jenis_asets.id', '=', 'perabotans.sub_category')
+        ->join('pegawais', 'pegawais.id', '=', 'perabotans.asset_holder')
+        ->select('perabotans.id_asset', 'jenis_asets.asset_category', 'jenis_asets.sub_category', 'perabotans.asset_name',
+                 'perabotans.brand', 'perabotans.type', 'perabotans.specification', 'perabotans.warranty_period',
+                 'perabotans.price', 'perabotans.quantity', 'perabotans.condition', 'perabotans.description',
+                 'pegawais.employee_name');
+
+        $furniture = $query->paginate(10)->withQueryString();
+
+        return view('/perabotan ', compact('furniture', 'asset_holder', 'user_entry', 'activities'));
     }
 
     /**
