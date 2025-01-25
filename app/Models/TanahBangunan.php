@@ -38,4 +38,9 @@ class TanahBangunan extends Model
     {
         return $this->belongsTo(JenisAset::class)->withDefault();
     }
+
+    public function jenisAset()
+    {
+        return $this->belongsTo(JenisAset::class, 'sub_category', 'id');
+    }
 }

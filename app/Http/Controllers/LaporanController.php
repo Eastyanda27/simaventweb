@@ -141,4 +141,17 @@ class LaporanController extends Controller
     {
         //
     }
+
+    public function inspeksiValidate(Request $request)
+    {
+        $validatedReport = $request->validate([
+            'reply_message' => [],
+            'kode_report' => ['required'],
+        ]);
+
+        Laporan::where('id_report', $validatedReport['kode_report'])
+                    ->update(['reply_message' => $validatedReport['reply_message'], 'status' => $validatedReport['status']]);
+
+        return redirect()->back()->with('success', 'Laporan Aset Telah Divalidasi dan Disetujui');
+    }
 }

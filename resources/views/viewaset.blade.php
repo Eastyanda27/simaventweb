@@ -187,8 +187,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>No</th>
-                                                            <th>Kode Agenda</th>
-                                                            <th>Nama Aset</th>
+                                                            <th>Kode</th>
                                                             <th>Kategori Agenda</th>
                                                             <th>Setiap Hari</th>
                                                             <th>Setiap Tanggal</th>
@@ -203,7 +202,6 @@
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ $Agenda->id_agenda }}</td>
-                                                            <td>{{ $Agenda->assetData->asset_name }}</td>
                                                             <td>{{ $Agenda->type }}</td>
                                                             <td>{{ $Agenda->day ? \Carbon\Carbon::parse($Agenda->day)->translatedFormat('l') : '' }}</td>
                                                             <td>{{ $Agenda->date }}</td>
@@ -235,6 +233,44 @@
                                         <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance-tab">
                                             <p>Fitur ini berfungsi untuk mencatat transaksi pengeluaran dan pemasukan yang berhubungan dengan aset ini, misalnya biaya servis, pajak, penggantian spare-part, biaya perawatan, dan sebagainya.</p>
                                             <p><strong>GOAL:</strong> Anda jadi tahu berapa total biaya yang sudah Anda keluarkan atau dapatkan sebagai dampak kepemilikan aset ini.</p>
+                                            <div class="table-responsive">
+                                                <table id="add-row" class="display table table-striped table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No</th>
+                                                            <th>Kode</th>
+                                                            <th>Kategori</th>
+                                                            <th>Tanggal</th>
+                                                            <th>Nominal</th>
+                                                            <th>Deskripsi</th>
+                                                            <th style="width: 10%"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($finance as $Finance)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $Finance->id_finance }}</td>
+                                                            <td>{{ $Finance->category }}</td>
+                                                            <td>{{ $Finance->date ? \Carbon\Carbon::parse($Finance->date)->translatedFormat('d M Y') : '' }}</td>
+                                                            <td>{{ $Finance->nominal }}</td>
+                                                            <td>{{ $Finance->description }}</td>
+                                                            <td>
+                                                                <div class="form-button-action">
+                                                                    <a href="/keuangan/{{ $Finance->id_finance }}/edit" class="btn btn-primary my-1 mx-1"><i class="bi bi-pencil-square"></i></a>
+                                                                    <form action="/keuangan/{{ $Finance->id_finance }}/destroy" method="POST">
+                                                                        @csrf
+                                                                        <button type="submit" data-toggle="tooltip" class="btn btn-danger my-1 ml-1" data-original-title="Hapus" onclick="return confirm('Yakin mau hapus data?')">
+                                                                            <i class="bi bi-trash-fill"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             <button class="btn btn-primary btn-round mt-3" data-toggle="modal" data-target="#addRowFinance">
 											    <i class="bi bi-plus-lg"></i> Keuangan
 										    </button>
@@ -247,6 +283,42 @@
                                             <button class="btn btn-primary btn-round mt-3" data-toggle="modal" data-target="#addRowJournal">
 											    <i class="bi bi-plus-lg"></i> Jurnal
 										    </button>
+                                            <div class="table-responsive">
+                                                <table id="add-row" class="display table table-striped table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No</th>
+                                                            <th>Kode</th>
+                                                            <th>Tanggal</th>
+                                                            <th>Peristiwa</th>
+                                                            <th>Deskripsi</th>
+                                                            <th style="width: 10%"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($journal as $Journal)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $Journal->id_journal }}</td>
+                                                            <td>{{ $Journal->date ? \Carbon\Carbon::parse($Journal->date)->translatedFormat('d M Y') : '' }}</td>
+                                                            <td>{{ $Journal->incident }}</td>
+                                                            <td>{{ $Journal->description }}</td>
+                                                            <td>
+                                                                <div class="form-button-action">
+                                                                    <a href="/jurnal/{{ $Journal->id_journal }}/edit" class="btn btn-primary my-1 mx-1"><i class="bi bi-pencil-square"></i></a>
+                                                                    <form action="/jurnal/{{ $Journal->id_journal }}/destroy" method="POST">
+                                                                        @csrf
+                                                                        <button type="submit" data-toggle="tooltip" class="btn btn-danger my-1 ml-1" data-original-title="Hapus" onclick="return confirm('Yakin mau hapus data?')">
+                                                                            <i class="bi bi-trash-fill"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

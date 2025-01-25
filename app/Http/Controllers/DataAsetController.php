@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AgendaAset;
 use App\Models\DataAset;
 use App\Models\JenisAset;
+use App\Models\JurnalAset;
 use App\Models\Kendaraan;
 use App\Models\KeuanganAset;
 use App\Models\User;
@@ -79,16 +80,24 @@ class DataAsetController extends Controller
                             ->where('kendaraans.id_asset', '=', $dataAset->id_asset)
                             ->get();
         
-        $agenda = AgendaAset::with(['assetData:id,id_asset,asset_name'])
-                            ->select('id_agenda', 'id_asset', 'type', 'day', 
-                                     'date', 'custom_date', 'activity', 'description')
-                            ->where('agenda_asets.id_asset', '=', $dataAset->id)
+        $agenda = AgendaAset::select('id_agenda', 'type', 'day', 'date',
+                                     'custom_date', 'activity', 'description')
+                            ->where('id_asset', '=', $dataAset->id)
                             ->get();
+        
+        $finance = KeuanganAset::select('id_finance', 'category', 'date', 'nominal',
+                                        'description')
+                               ->where('id_asset', '=', $dataAset->id)
+                               ->get();
+        
+        $journal = JurnalAset::select('id_journal', 'date', 'incident', 'description')
+                             ->where('id_asset', '=', $dataAset->id)
+                             ->get();
 
         $user_entry = User::where('employee_name', Auth::user()->employee_name)->first()->id;
 
         return view('/viewaset', compact(
-            'activities', 'user_entry', 'vehicle', 'agenda'));
+            'activities', 'user_entry', 'vehicle', 'agenda', 'finance', 'journal'));
     }
 
     /**
